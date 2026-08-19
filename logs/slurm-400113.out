@@ -1,0 +1,26 @@
+----------------------------------------
+Device: cuda
+Context generator parameters: 7,825 (0.008 M)
+LUT shape: (16, 16, 16, 16, 1)
+LUT entries: 65,536 (0.066 M)
+Total inference learned values: 73,361 (0.073 M)
+----------------------------------------
+Running one warm-up inference (excluded from benchmark)...
+Warm-up finished.
+[OK] 1/4 0.png | input: 336x448 | latency: 12.822 ms | peak allocated: 38.80 MiB | reserved: 76.00 MiB
+[OK] 2/4 1.png | input: 336x448 | latency: 3.491 ms | peak allocated: 41.10 MiB | reserved: 76.00 MiB
+[OK] 3/4 2.png | input: 336x448 | latency: 3.156 ms | peak allocated: 40.52 MiB | reserved: 76.00 MiB
+[OK] 4/4 3.png | input: 336x448 | latency: 3.203 ms | peak allocated: 41.10 MiB | reserved: 76.00 MiB
+----------------------------------------
+LUT-Fuse inference finished
+Measured images: 4
+Input image sizes (HxW): 336x448 (4 image(s))
+Total inference time: 0.022672 sec
+Average inference latency: 5.668 ms/image
+Latency standard deviation: 4.133 ms
+Throughput: 176.432 FPS
+Total inference learned values: 73,361 (0.073 M)
+Peak CUDA memory allocated: 41.10 MiB
+Peak CUDA memory reserved: 76.00 MiB
+Benchmark metrics: /ceph_data/fovert/etri_dh/LUT-Fuse/results_kiro/benchmark_metrics.txt
+----------------------------------------

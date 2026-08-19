@@ -1,0 +1,26 @@
+[LUT-Fuse inference benchmark]
+Device: cuda
+Batch size: 1
+Measured images: 4
+Input image sizes (HxW): 336x448 (4 image(s))
+
+[Latency and throughput]
+Scope: apply_fusion_4d_with_interpolation only; excludes data loading, resizing, and image saving
+Warm-up: one pass excluded from all measurements
+Total inference time: 0.022672 sec
+Average inference latency: 0.005668 sec/image
+Average inference latency: 5.668 ms/image
+Latency standard deviation: 4.133 ms
+Throughput: 176.432 FPS
+
+[Parameters]
+Context generator parameters: 7,825 (0.008 M)
+Context generator trainable parameters: 7,825 (0.008 M)
+LUT shape: 16x16x16x16x1
+LUT entries: 65,536 (0.066 M)
+Total inference learned values: 73,361 (0.073 M)
+
+[CUDA VRAM]
+Peak memory allocated: 41.10 MiB
+Peak memory reserved: 76.00 MiB
+VRAM note: maximum across measured images, including checkpoints and input tensors.
