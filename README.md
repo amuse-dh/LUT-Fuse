@@ -60,9 +60,21 @@ You can find them under [`./ckpts`](./ckpts).
 
 ## 🧪 Test
 
+```bash
+CUDA_VISIBLE_DEVICES=0 python test_lut.py \
+  --visible_dir /path/to/Visible \
+  --infrared_dir /path/to/Infrared \
+  --save_dir /path/to/results
 ```
-CUDA_VISIBLE_DEVICES=0 python test_lut.py
-```
+
+The default checkpoints are `ckpts/fine_tuned_lut.npy` and
+`ckpts/generator_context.pth`. Override them with `--lut_path` and
+`--context_path` when needed.
+
+The test script performs one unmeasured warm-up pass, then reports total
+inference time, average latency, FPS, input image size, parameter/LUT counts,
+and peak CUDA memory. The same summary is saved to
+`benchmark_metrics.txt` in `--save_dir`.
 
 ## 🚀 Train
 

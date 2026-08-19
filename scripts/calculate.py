@@ -27,10 +27,12 @@ def ycbcr_to_rgb(img):
                 dim=1)
 
 
-def load_lookup_table(filepath):
+def load_lookup_table(filepath, device=None):
     try:
         lut = np.load(filepath).astype(np.float32)
-        lut = torch.tensor(lut, device="cuda")  # 将查找表移到 GPU 上
+        if device is None:
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        lut = torch.from_numpy(lut).to(device)
         return lut
     except Exception as e:
         print(f"加载查找表时出错: {e}")
