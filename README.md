@@ -82,6 +82,59 @@ and peak CUDA memory. The same summary is saved to
 CUDA_VISIBLE_DEVICES=0 python fine_tune_lut.py
 ```
 
+### A0/A1 teacher distillation
+
+`train_distillation.py` keeps the original LUT, context encoder, interpolation,
+and four original training terms. Only the teacher target is configurable:
+
+- `A0_original`: cached RGB images produced by the original MM-Net. The
+  upstream repository does not include an MM-Net class/checkpoint, so the
+  existing `Fuse_ref`-style images are the baseline teacher contract.
+- `A1_lefuse_teacher`: a frozen LEFuse teacher evaluated online under
+  `torch.no_grad()`. LEFuse is training-only and is never imported by
+  `test_lut.py` or `scripts/calculate.py`.
+
+Edit the dataset paths in the selected config, then run:
+
+```bash
+# Original cached-teacher baseline
+CUDA_VISIBLE_DEVICES=0 python train_distillation.py --config configs/a0_original.yaml
+
+# Teacher-replacement-only experiment
+CUDA_VISIBLE_DEVICES=0 python train_distillation.py --config configs/a1_lefuse_teacher.yaml
+```
+
+The default A1 config expects the ETRI LEFuse checkout at
+`../ETRI_Night_Fusion` and checkpoint `../ETRI_Night_Fusion/L2024.pth`.
+Change `teacher.source_dir` and `teacher.checkpoint` when using another
+location. LEFuse preprocessing is reproduced from that checkout, including
+its fixed nighttime luminance/chroma processing. Because its OpenCV NLM step
+accepts one image at a time, online teacher generation iterates over each
+training batch internally; this does not affect deployed inference.
+
+Output contracts used for distillation are:
+
+- LEFuse teacher: reconstructed RGB float tensor `[B, 3, H, W]`, clamped to
+  `[0, 1]`.
+- LUT-Fuse student: original reconstructed RGB float tensor `[B, 3, H, W]`.
+  It remains unclamped to preserve upstream training/inference behavior. The
+  LUT checkpoint itself is unconstrained, so the realized RGB values may
+  leave `[0, 1]`; the trainer reports this range and rejects NaN/Inf.
+- Comparison: direct, spatially aligned RGB L1. No resize or channel broadcast
+  is performed between teacher and student.
+
+At the first training batch the trainer asserts and prints all input/output
+shapes and ranges. Every run writes its resolved YAML, seed, git commit,
+teacher/student output contract, TensorBoard losses, and best/final student
+checkpoints under `finetune_lut_exp/`.
+
+A1 intentionally adds no texture, enhancement, perceptual, weighted-KD, or
+Multi-LUT terms. Before proceeding to A2, compare A1 against A0 using the same
+data and preprocessing. Check whether dark visible structure and texture
+improve while thermal targets and color remain stable. Benchmark the saved A1
+student independently with `test_lut.py`; the inference graph should retain
+the original LUT-Fuse speed because no teacher component is present.
+
 ## 📖 Citation
 
 If you find our work or dataset useful for your research, please cite our paper.

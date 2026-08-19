@@ -2,3 +2,4 @@ __pycache__/
 *.py[cod]
 *.pyo
 .Python
+finetune_lut_exp/

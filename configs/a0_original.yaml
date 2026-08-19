@@ -1,0 +1,40 @@
+experiment:
+  name: A0_original
+  output_root: finetune_lut_exp
+  seed: 42
+
+student:
+  lut_checkpoint: ckpts/fine_tuned_lut_original.npy
+  context_checkpoint: ckpts/generator_context_original.pth
+
+teacher:
+  # The upstream repository contains no MM-Net class. A0 consumes its
+  # pre-generated RGB fusion images through dataset.*.teacher_dir.
+  type: original_mmnet
+
+dataset:
+  require_matching_stems: true
+  train:
+    visible_dir: /path/to/train/Visible
+    infrared_dir: /path/to/train/Infrared
+    teacher_dir: /path/to/train/MMNet
+  val:
+    visible_dir: /path/to/val/Visible
+    infrared_dir: /path/to/val/Infrared
+    teacher_dir: /path/to/val/MMNet
+
+training:
+  epochs: 496
+  batch_size: 6
+  val_batch_size: 1
+  learning_rate: 0.00005
+  crop_size: [128, 128]
+  num_workers: 8
+  validate_every: 10
+
+loss:
+  dist_int: {enabled: true, weight: 1.0}
+  # Upstream's source-consistency fusion_loss; retained under its A1 label.
+  dist_ssim: {enabled: true, weight: 1.0}
+  lut_tv: {enabled: true, weight: 0.0001}
+  lut_monotonic: {enabled: true, weight: 10.0}
